@@ -24,7 +24,13 @@ public class SensorEventServiceImpl implements SensorEventService {
     public void collect(SensorEvent sensorEvent) {
         SensorEventAvro sensorEventAvro = sensorEventMapper.mapSensorEvent(sensorEvent);
 
-        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(TOPIC, sensorEvent.getHubId(), sensorEventAvro);
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(
+                TOPIC,
+                null,
+                sensorEvent.getTimestamp().toEpochMilli(),
+                sensorEvent.getHubId(),
+                sensorEventAvro
+        );
 
         try {
             kafkaClient.getProducer().send(record).get();
