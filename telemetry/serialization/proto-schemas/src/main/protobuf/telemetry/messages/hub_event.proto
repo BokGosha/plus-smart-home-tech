@@ -19,11 +19,12 @@ message HubEventProto {
 }
 
 enum DeviceTypeProto {
-  MOTION_SENSOR = 0;
-  TEMPERATURE_SENSOR = 1;
+  DEVICE_TYPE_NOT_SET = 0;
+  MOTION_SENSOR = 1;
   LIGHT_SENSOR = 2;
-  CLIMATE_SENSOR = 3;
-  SWITCH_SENSOR = 4;
+  TEMPERATURE_SENSOR = 3;
+  CLIMATE_SENSOR = 4;
+  SWITCH_SENSOR = 5;
 }
 
 message DeviceAddedEventProto {
@@ -36,18 +37,20 @@ message DeviceRemovedEventProto {
 }
 
 enum ConditionTypeProto {
-  MOTION = 0;
-  LUMINOSITY = 1;
-  SWITCH = 2;
-  TEMPERATURE = 3;
-  CO2LEVEL = 4;
-  HUMIDITY = 5;
+  CONDITION_TYPE_NOT_SET = 0;
+  MOTION = 1;
+  LUMINOSITY = 2;
+  SWITCH = 3;
+  TEMPERATURE = 4;
+  CO2LEVEL = 5;
+  HUMIDITY = 6;
 }
 
 enum ConditionOperationProto {
-  EQUALS = 0;
-  GREATER_THAN = 1;
-  LOWER_THAN = 2;
+  CONDITION_OPERATION_NOT_SET = 0;
+  EQUALS = 1;
+  GREATER_THAN = 2;
+  LOWER_THAN = 3;
 }
 
 message ScenarioAddedEventProto {
@@ -67,10 +70,11 @@ message ScenarioConditionProto {
 }
 
 enum ActionTypeProto {
-  ACTIVATE = 0;
-  DEACTIVATE = 1;
-  INVERSE = 2;
-  SET_VALUE = 3;
+  ACTION_TYPE_NOT_SET = 0;
+  ACTIVATE = 1;
+  DEACTIVATE = 2;
+  INVERSE = 3;
+  SET_VALUE = 4;
 }
 
 message DeviceActionProto {
