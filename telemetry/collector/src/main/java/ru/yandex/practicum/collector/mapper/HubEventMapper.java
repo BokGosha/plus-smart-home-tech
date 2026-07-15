@@ -1,8 +1,7 @@
-package ru.yandex.practicum.collector.mapping;
+package ru.yandex.practicum.collector.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.collector.model.hub.*;
-import ru.yandex.practicum.collector.model.sensor.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.util.List;

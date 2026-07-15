@@ -1,4 +1,4 @@
-package ru.yandex.practicum.collector.mapping;
+package ru.yandex.practicum.collector.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.collector.model.sensor.*;

@@ -5,7 +5,6 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import ru.yandex.practicum.collector.service.hub.HubEventService;
 import ru.yandex.practicum.collector.service.hub.HubEventHandler;
 import ru.yandex.practicum.collector.service.sensor.SensorEventHandler;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
@@ -18,16 +17,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @GrpcService
-public class CollectorController extends CollectorControllerGrpc.CollectorControllerImplBase {
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
     private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
     private final Map<HubEventProto.PayloadCase, HubEventHandler> hubEventHandlers;
-    private final HubEventService hubEventService;
 
-    public CollectorController(Set<SensorEventHandler> sensorEventHandlers,
-                               Set<HubEventHandler> hubEventHandlers,
-                               HubEventService hubEventService) {
-        this.hubEventService = hubEventService;
+    public EventController(Set<SensorEventHandler> sensorEventHandlers,
+                           Set<HubEventHandler> hubEventHandlers) {
         this.sensorEventHandlers = sensorEventHandlers.stream()
                 .collect(Collectors.toMap(
                         SensorEventHandler::getMessageType,
@@ -35,7 +31,8 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
                 ));
         this.hubEventHandlers = hubEventHandlers.stream()
                 .collect(Collectors.toMap(
-                        HubEventHandler::getMessageType, Function.identity()
+                        HubEventHandler::getMessageType,
+                        Function.identity()
                 ));
     }
 
