@@ -5,11 +5,10 @@ import lombok.Getter;
 @Getter
 public enum ActionType {
 
-    ACTIVATE(1),
-    DEACTIVATE(2),
-    INVERSE(3),
-    SET_VALUE(4),
-    ACTION_TYPE_NOT_SET(0);
+    ACTIVATE(0),
+    DEACTIVATE(1),
+    INVERSE(2),
+    SET_VALUE(3);
 
     private final int value;
 
@@ -23,6 +22,6 @@ public enum ActionType {
                 return type;
             }
         }
-        return ACTION_TYPE_NOT_SET;
+        throw new IllegalArgumentException("Unknown action type: " + value);
     }
 }

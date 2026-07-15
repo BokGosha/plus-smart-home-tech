@@ -5,12 +5,11 @@ import lombok.Getter;
 @Getter
 public enum DeviceType {
 
-    MOTION_SENSOR(1),
+    MOTION_SENSOR(0),
+    TEMPERATURE_SENSOR(1),
     LIGHT_SENSOR(2),
-    TEMPERATURE_SENSOR(3),
-    CLIMATE_SENSOR(4),
-    SWITCH_SENSOR(5),
-    DEVICE_TYPE_NOT_SET(0);
+    CLIMATE_SENSOR(3),
+    SWITCH_SENSOR(4);
 
     private final int value;
 
@@ -24,6 +23,6 @@ public enum DeviceType {
                 return type;
             }
         }
-        return DEVICE_TYPE_NOT_SET;
+        throw new IllegalArgumentException("Unknown device type: " + value);
     }
 }

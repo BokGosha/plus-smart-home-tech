@@ -5,12 +5,11 @@ import lombok.Getter;
 @Getter
 public enum SensorEventType {
 
-    MOTION_SENSOR_EVENT(1),
-    TEMPERATURE_SENSOR_EVENT(2),
-    LIGHT_SENSOR_EVENT(3),
-    CLIMATE_SENSOR_EVENT(4),
-    SWITCH_SENSOR_EVENT(5),
-    SENSOR_EVENT_TYPE_NOT_SET(0);
+    MOTION_SENSOR_EVENT(0),
+    TEMPERATURE_SENSOR_EVENT(1),
+    LIGHT_SENSOR_EVENT(2),
+    CLIMATE_SENSOR_EVENT(3),
+    SWITCH_SENSOR_EVENT(4);
 
     private final int value;
 
@@ -24,6 +23,6 @@ public enum SensorEventType {
                 return type;
             }
         }
-        return SENSOR_EVENT_TYPE_NOT_SET;
+        throw new IllegalArgumentException("Unknown sensor event type: " + value);
     }
 }

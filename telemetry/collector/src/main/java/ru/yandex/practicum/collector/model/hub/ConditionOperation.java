@@ -5,10 +5,9 @@ import lombok.Getter;
 @Getter
 public enum ConditionOperation {
 
-    EQUALS(1),
-    GREATER_THAN(2),
-    LOWER_THAN(3),
-    CONDITION_OPERATION_NOT_SET(0);
+    EQUALS(0),
+    GREATER_THAN(1),
+    LOWER_THAN(2);
 
     private final int value;
 
@@ -22,6 +21,6 @@ public enum ConditionOperation {
                 return operation;
             }
         }
-        return CONDITION_OPERATION_NOT_SET;
+        throw new IllegalArgumentException("Unknown condition operation: " + value);
     }
 }

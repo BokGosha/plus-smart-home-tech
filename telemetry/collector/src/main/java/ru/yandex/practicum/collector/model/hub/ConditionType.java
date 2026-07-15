@@ -5,13 +5,12 @@ import lombok.Getter;
 @Getter
 public enum ConditionType {
 
-    MOTION(1),
-    LUMINOSITY(2),
-    SWITCH(3),
-    TEMPERATURE(4),
-    CO2LEVEL(5),
-    HUMIDITY(6),
-    CONDITION_TYPE_NOT_SET(0);
+    MOTION(0),
+    LUMINOSITY(1),
+    SWITCH(2),
+    TEMPERATURE(3),
+    CO2LEVEL(4),
+    HUMIDITY(5);
 
     private final int value;
 
@@ -25,6 +24,6 @@ public enum ConditionType {
                 return type;
             }
         }
-        return CONDITION_TYPE_NOT_SET;
+        throw new IllegalArgumentException("Unknown condition type: " + value);
     }
 }

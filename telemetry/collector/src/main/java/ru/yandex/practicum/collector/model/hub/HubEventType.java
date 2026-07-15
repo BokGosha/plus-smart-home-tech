@@ -5,11 +5,10 @@ import lombok.Getter;
 @Getter
 public enum HubEventType {
 
-    DEVICE_ADDED(1),
-    DEVICE_REMOVED(2),
-    SCENARIO_ADDED(3),
-    SCENARIO_REMOVED(4),
-    HUB_EVENT_TYPE_NOT_SET(0);
+    DEVICE_ADDED(0),
+    DEVICE_REMOVED(1),
+    SCENARIO_ADDED(2),
+    SCENARIO_REMOVED(3);
 
     private final int value;
 
@@ -23,6 +22,6 @@ public enum HubEventType {
                 return type;
             }
         }
-        return HUB_EVENT_TYPE_NOT_SET;
+        throw new IllegalArgumentException("Unknown hub event type: " + value);
     }
 }
