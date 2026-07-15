@@ -1,12 +1,13 @@
 package ru.yandex.practicum.collector.service.sensor;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.collector.kafka.KafkaClient;
 import ru.yandex.practicum.collector.mapping.SensorEventMapper;
 import ru.yandex.practicum.collector.model.sensor.SensorEvent;
-import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.util.concurrent.ExecutionException;
 
@@ -21,14 +22,14 @@ public class SensorEventServiceImpl implements SensorEventService {
 
     @Override
     public void collect(SensorEvent sensorEvent) {
-        SensorEventProto sensorEventProto = sensorEventMapper.mapSensorEvent(sensorEvent);
+        SensorEventAvro sensorEventAvro = sensorEventMapper.mapSensorEvent(sensorEvent);
 
-        ProducerRecord<String, byte[]> record = new ProducerRecord<>(
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(
                 TOPIC,
                 null,
                 sensorEvent.getTimestamp().toEpochMilli(),
                 sensorEvent.getHubId(),
-                sensorEventProto.toByteArray()
+                sensorEventAvro
         );
 
         try {

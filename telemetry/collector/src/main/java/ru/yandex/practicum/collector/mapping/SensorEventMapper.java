@@ -2,52 +2,63 @@ package ru.yandex.practicum.collector.mapping;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.collector.model.sensor.*;
-import ru.yandex.practicum.collector.model.sensor.SensorEvent;
-import ru.yandex.practicum.grpc.telemetry.event.*;
+import ru.yandex.practicum.kafka.telemetry.event.*;
 
 @Component
 public class SensorEventMapper {
 
-    public SensorEventProto mapSensorEvent(SensorEvent sensorEvent) {
-        SensorEventProto.Builder builder = SensorEventProto.newBuilder()
+    public SensorEventAvro mapSensorEvent(SensorEvent sensorEvent) {
+        return SensorEventAvro.newBuilder()
                 .setId(sensorEvent.getId())
                 .setHubId(sensorEvent.getHubId())
-                .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
-                        .setSeconds(sensorEvent.getTimestamp().getEpochSecond())
-                        .setNanos(sensorEvent.getTimestamp().getNano())
-                        .build());
-
-        mapPayload(sensorEvent, builder);
-        return builder.build();
+                .setTimestamp(sensorEvent.getTimestamp())
+                .setPayload(mapPayload(sensorEvent))
+                .build();
     }
 
-    private void mapPayload(SensorEvent sensorEvent, SensorEventProto.Builder builder) {
-        if (sensorEvent instanceof LightSensorEvent lightEvent) {
-            builder.setLightSensor(LightSensorProto.newBuilder()
-                    .setLinkQuality(lightEvent.getLinkQuality())
-                    .setLuminosity(lightEvent.getLuminosity())
-                    .build());
-        } else if (sensorEvent instanceof MotionSensorEvent motionEvent) {
-            builder.setMotionSensor(MotionSensorProto.newBuilder()
-                    .setLinkQuality(motionEvent.getLinkQuality())
-                    .setMotion(motionEvent.getMotion())
-                    .setVoltage(motionEvent.getVoltage())
-                    .build());
-        } else if (sensorEvent instanceof TemperatureSensorEvent tempEvent) {
-            builder.setTemperatureSensor(TemperatureSensorProto.newBuilder()
-                    .setTemperatureC(tempEvent.getTemperatureC())
-                    .setTemperatureF(tempEvent.getTemperatureF())
-                    .build());
-        } else if (sensorEvent instanceof ClimateSensorEvent climateEvent) {
-            builder.setClimateSensor(ClimateSensorProto.newBuilder()
-                    .setTemperatureC(climateEvent.getTemperatureC())
-                    .setCo2Level(climateEvent.getCo2Level())
-                    .setHumidity(climateEvent.getHumidity())
-                    .build());
-        } else if (sensorEvent instanceof SwitchSensorEvent switchEvent) {
-            builder.setSwitchSensor(SwitchSensorProto.newBuilder()
-                    .setState(switchEvent.getState())
-                    .build());
-        }
+    private Object mapPayload(SensorEvent sensorEvent) {
+        return switch (sensorEvent.getType()) {
+            case LIGHT_SENSOR_EVENT -> mapLightSensorEvent((LightSensorEvent) sensorEvent);
+            case MOTION_SENSOR_EVENT -> mapMotionSensorEvent((MotionSensorEvent) sensorEvent);
+            case TEMPERATURE_SENSOR_EVENT -> mapTemperatureSensorEvent((TemperatureSensorEvent) sensorEvent);
+            case CLIMATE_SENSOR_EVENT -> mapClimateSensorEvent((ClimateSensorEvent) sensorEvent);
+            case SWITCH_SENSOR_EVENT -> mapSwitchSensorEvent((SwitchSensorEvent) sensorEvent);
+        };
+    }
+
+    private LightSensorAvro mapLightSensorEvent(LightSensorEvent sensorEvent) {
+        return LightSensorAvro.newBuilder()
+                .setLinkQuality(sensorEvent.getLinkQuality())
+                .setLuminosity(sensorEvent.getLuminosity())
+                .build();
+    }
+
+    private MotionSensorAvro mapMotionSensorEvent(MotionSensorEvent sensorEvent) {
+        return MotionSensorAvro.newBuilder()
+                .setLinkQuality(sensorEvent.getLinkQuality())
+                .setMotion(sensorEvent.getMotion())
+                .setVoltage(sensorEvent.getVoltage())
+                .build();
+    }
+
+    private TemperatureSensorAvro mapTemperatureSensorEvent(TemperatureSensorEvent sensorEvent) {
+        return TemperatureSensorAvro.newBuilder()
+                .setTemperatureC(sensorEvent.getTemperatureC())
+                .setTemperatureF(sensorEvent.getTemperatureF())
+                .build();
+    }
+
+    private ClimateSensorAvro mapClimateSensorEvent(ClimateSensorEvent sensorEvent) {
+        return ClimateSensorAvro.newBuilder()
+                .setTemperatureC(sensorEvent.getTemperatureC())
+                .setCo2Level(sensorEvent.getCo2Level())
+                .setHumidity(sensorEvent.getHumidity())
+                .build();
+    }
+
+    private SwitchSensorAvro mapSwitchSensorEvent(SwitchSensorEvent sensorEvent) {
+        return SwitchSensorAvro.newBuilder()
+                .setState(sensorEvent.getState())
+                .build();
     }
 }
