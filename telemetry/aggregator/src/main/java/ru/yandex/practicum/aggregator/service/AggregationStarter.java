@@ -73,7 +73,7 @@ public class AggregationStarter {
                 log.info("Закрываем консьюмер");
                 consumer.close();
                 log.info("Закрываем продюсер");
-                producer.close();
+                producer.close(Duration.ofSeconds(10));
             }
         }
     }

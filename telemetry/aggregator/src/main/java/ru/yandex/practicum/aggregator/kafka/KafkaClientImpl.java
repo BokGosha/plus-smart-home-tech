@@ -12,6 +12,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Properties;
 
 @Component
@@ -87,7 +88,7 @@ public class KafkaClientImpl implements KafkaClient {
     public void destroy() {
         if (producer != null) {
             producer.flush();
-            producer.close();
+            producer.close(Duration.ofSeconds(10));
         }
 
         if (consumer != null) {

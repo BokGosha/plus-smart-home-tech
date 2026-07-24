@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SensorsSnapshotServiceImpl implements SensorsSnapshotService {
 
-    Map<String, SensorsSnapshotAvro> sensorsSnapshotAvroMap = new HashMap<>();
+    private final Map<String, SensorsSnapshotAvro> sensorsSnapshotAvroMap = new HashMap<>();
 
     @Override
     public Optional<SensorsSnapshotAvro> updateState(SensorEventAvro event) {
