@@ -19,7 +19,9 @@ import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -75,14 +77,14 @@ public class HubEventHandler {
                     return created;
                 });
 
-        Map<Sensor, Condition> conditions = new HashMap<>();
-        Map<String, Sensor> sensorsById = sensorRepository.findByIdInAndHubId(
-                event.getConditions().stream()
-                        .map(ScenarioConditionAvro::getSensorId)
-                        .collect(Collectors.toSet()),
-                hubId
-        ).stream().collect(Collectors.toMap(Sensor::getId, Function.identity()));
+        Set<String> sensorIds = new HashSet<>();
+        event.getConditions().forEach(condition -> sensorIds.add(condition.getSensorId()));
+        event.getActions().forEach(action -> sensorIds.add(action.getSensorId()));
 
+        Map<String, Sensor> sensorsById = sensorRepository.findByIdInAndHubId(sensorIds, hubId)
+                .stream().collect(Collectors.toMap(Sensor::getId, Function.identity()));
+
+        Map<Sensor, Condition> conditions = new HashMap<>();
         for (ScenarioConditionAvro conditionAvro : event.getConditions()) {
             Sensor sensor = sensorsById.get(conditionAvro.getSensorId());
             if (sensor != null) {
