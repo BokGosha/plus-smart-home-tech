@@ -1,4 +1,17 @@
 services:
+  db:
+    image: postgres:16
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smart_home
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka
@@ -33,3 +46,6 @@ services:
                              --partitions 1 --replication-factor 1 --if-not-exists \
                              --bootstrap-server kafka:29092'"
     init: true
+
+volumes:
+  db_data:

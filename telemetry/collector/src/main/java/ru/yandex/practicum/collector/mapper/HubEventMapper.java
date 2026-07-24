@@ -1,8 +1,7 @@
-package ru.yandex.practicum.collector.mapping;
+package ru.yandex.practicum.collector.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.collector.model.hub.*;
-import ru.yandex.practicum.collector.model.sensor.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.util.List;
@@ -65,12 +64,18 @@ public class HubEventMapper {
     }
 
     private ScenarioConditionAvro mapScenarioCondition(ScenarioCondition scenarioCondition) {
-        return ScenarioConditionAvro.newBuilder()
+        ScenarioConditionAvro.Builder builder = ScenarioConditionAvro.newBuilder()
                 .setSensorId(scenarioCondition.getSensorId())
                 .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().name()))
-                .setValue(scenarioCondition.getValue())
-                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().name()))
-                .build();
+                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().name()));
+
+        if (scenarioCondition.getBoolValue() != null) {
+            builder.setValue(scenarioCondition.getBoolValue() ? 1 : 0);
+        } else if (scenarioCondition.getIntValue() != null) {
+            builder.setValue(scenarioCondition.getIntValue());
+        }
+
+        return builder.build();
     }
 
     private ScenarioRemovedEventAvro mapScenarioRemoved(ScenarioRemovedEvent hubEvent) {
