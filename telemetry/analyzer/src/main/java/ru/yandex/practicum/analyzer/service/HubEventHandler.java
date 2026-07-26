@@ -19,7 +19,11 @@ import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -73,16 +77,27 @@ public class HubEventHandler {
                     return created;
                 });
 
+        Set<String> sensorIds = new HashSet<>();
+        event.getConditions().forEach(condition -> sensorIds.add(condition.getSensorId()));
+        event.getActions().forEach(action -> sensorIds.add(action.getSensorId()));
+
+        Map<String, Sensor> sensorsById = sensorRepository.findByIdInAndHubId(sensorIds, hubId)
+                .stream().collect(Collectors.toMap(Sensor::getId, Function.identity()));
+
         Map<Sensor, Condition> conditions = new HashMap<>();
         for (ScenarioConditionAvro conditionAvro : event.getConditions()) {
-            sensorRepository.findByIdAndHubId(conditionAvro.getSensorId(), hubId)
-                    .ifPresent(sensor -> conditions.put(sensor, toCondition(conditionAvro)));
+            Sensor sensor = sensorsById.get(conditionAvro.getSensorId());
+            if (sensor != null) {
+                conditions.put(sensor, toCondition(conditionAvro));
+            }
         }
 
         Map<Sensor, Action> actions = new HashMap<>();
         for (DeviceActionAvro actionAvro : event.getActions()) {
-            sensorRepository.findByIdAndHubId(actionAvro.getSensorId(), hubId)
-                    .ifPresent(sensor -> actions.put(sensor, toAction(actionAvro)));
+            Sensor sensor = sensorsById.get(actionAvro.getSensorId());
+            if (sensor != null) {
+                actions.put(sensor, toAction(actionAvro));
+            }
         }
 
         scenario.getConditions().clear();
