@@ -88,7 +88,7 @@ public class KafkaClientImpl implements KafkaClient {
     public void destroy() {
         if (producer != null) {
             producer.flush();
-            producer.close(Duration.ofSeconds(10));
+            producer.close(Duration.ofSeconds(3));
         }
 
         if (consumer != null) {
