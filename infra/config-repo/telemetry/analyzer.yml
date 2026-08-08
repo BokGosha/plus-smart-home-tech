@@ -1,5 +1,6 @@
 spring:
   datasource:
+    driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/smart_home
     username: postgres
     password: postgres
@@ -20,7 +21,6 @@ grpc:
       negotiationType: plaintext
 
 kafka:
-  bootstrap-servers: localhost:9092
   consume-attempt-timeout-ms: 1000
   consumer:
     snapshot:

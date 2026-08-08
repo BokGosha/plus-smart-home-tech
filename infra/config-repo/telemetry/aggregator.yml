@@ -1,5 +1,9 @@
+aggregator:
+  kafka:
+    consumer:
+      poll-timeout: 100ms
+
 kafka:
-  bootstrap-servers: localhost:9092
   producer:
     key-serializer: org.apache.kafka.common.serialization.StringSerializer
     value-serializer: ru.yandex.practicum.kafka.telemetry.serializer.GeneralAvroSerializer
