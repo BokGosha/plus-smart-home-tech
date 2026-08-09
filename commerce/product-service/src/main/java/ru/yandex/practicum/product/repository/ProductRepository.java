@@ -9,13 +9,13 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category")
     List<Product> findAllWithCategory();
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category c WHERE c.id = :categoryId")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category c WHERE c.id = :categoryId")
     List<Product> findByCategoryIdWithCategory(Long categoryId);
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.name LIKE %:name%")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.name LIKE %:name%")
     List<Product> findByNameWithCategory(String name);
 
     Optional<Product> findByName(String name);

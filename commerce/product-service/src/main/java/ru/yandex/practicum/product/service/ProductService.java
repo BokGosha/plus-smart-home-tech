@@ -51,10 +51,11 @@ public class ProductService {
                 throw new IllegalArgumentException("Продукт с именем=" + name + " уже существует");
         }
 
-        Category category = categoryService.findCategoryById(createProductRequest.categoryId());
-
         Product product = productMapper.toProduct(createProductRequest);
-        product.setCategory(category);
+        if (createProductRequest.categoryId() != null) {
+            Category category = categoryService.findCategoryById(createProductRequest.categoryId());
+            product.setCategory(category);
+        }
 
         productRepository.save(product);
 

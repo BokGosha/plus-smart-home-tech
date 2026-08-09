@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS products (
     name        VARCHAR(255)   NOT NULL,
     description TEXT,
     price       DECIMAL(10, 2) NOT NULL,
-    category_id BIGINT         NOT NULL,
+    category_id BIGINT,
     image_url   VARCHAR(255),
     active      BOOLEAN,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
