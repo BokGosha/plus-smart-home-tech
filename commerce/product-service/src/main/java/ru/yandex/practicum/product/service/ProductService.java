@@ -57,6 +57,8 @@ public class ProductService {
             product.setCategory(category);
         }
 
+        product.setActive(true);
+
         productRepository.save(product);
 
         return productMapper.toProductDto(product);
