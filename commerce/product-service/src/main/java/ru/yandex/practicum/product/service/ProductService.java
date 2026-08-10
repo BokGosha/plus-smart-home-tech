@@ -25,7 +25,9 @@ public class ProductService {
     private final CategoryService categoryService;
 
     public List<ProductDto> getProducts() {
-        return productMapper.toProductDtoList(productRepository.findAllWithCategory());
+        return productMapper.toProductDtoList(productRepository.findAllWithCategory().stream()
+                .filter(Product::getActive)
+                .toList());
     }
 
     public ProductDto getProductById(Long id) {
