@@ -3,18 +3,18 @@ package ru.yandex.practicum.order.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.order.dto.CreateOrderRequest;
-import ru.yandex.practicum.order.dto.OrderDto;
-import ru.yandex.practicum.order.dto.OrderItemRequest;
+import ru.yandex.practicum.order.dto.*;
 import ru.yandex.practicum.order.entity.Order;
+import ru.yandex.practicum.order.entity.OrderData;
 import ru.yandex.practicum.order.entity.OrderItem;
+import ru.yandex.practicum.order.entity.OrderItemData;
 import ru.yandex.practicum.order.exception.NotFoundException;
 import ru.yandex.practicum.order.mapper.OrderItemMapper;
 import ru.yandex.practicum.order.mapper.OrderMapper;
 import ru.yandex.practicum.order.repository.OrderRepository;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,17 +26,17 @@ public class OrderService {
     private final OrderItemMapper orderItemMapper;
 
     @Transactional
-    public OrderDto createOrder(CreateOrderRequest createOrderRequest) {
-        Order order = orderMapper.toOrder(createOrderRequest);
+    public OrderDto saveOrder(OrderData orderData) {
+        Order order = new Order();
+        order.setCustomerName(orderData.customerName());
+        order.setCustomerEmail(orderData.customerEmail());
+        order.setStatus("CONFIRMED");
 
-        for (OrderItemRequest itemRequest : createOrderRequest.items()) {
-            OrderItem item = orderItemMapper.toOrderItem(itemRequest);
-
+        for (OrderItemData itemData : orderData.items()) {
+            OrderItem item = orderItemMapper.toOrderItem(itemData);
             order.addItem(item);
         }
 
-        order.setStatus("CREATED");
-        order.setCreatedAt(java.time.LocalDateTime.now());
         order.setTotalPrice(calculateTotalPrice(order.getItems()));
 
         orderRepository.save(order);
