@@ -18,5 +18,6 @@ public class ScenarioCondition {
     @NotNull
     private ConditionOperation operation;
 
-    private Integer value;
+    private Integer intValue;
+    private Boolean boolValue;
 }

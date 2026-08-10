@@ -5,7 +5,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.collector.kafka.KafkaClient;
-import ru.yandex.practicum.collector.mapping.SensorEventMapper;
+import ru.yandex.practicum.collector.mapper.SensorEventMapper;
 import ru.yandex.practicum.collector.model.sensor.SensorEvent;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 

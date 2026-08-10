@@ -1,0 +1,8 @@
+grpc:
+  server:
+    port: 59091
+
+kafka:
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: ru.yandex.practicum.kafka.telemetry.serializer.GeneralAvroSerializer
