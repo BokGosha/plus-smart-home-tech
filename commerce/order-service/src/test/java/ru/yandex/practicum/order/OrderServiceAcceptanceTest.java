@@ -2,21 +2,31 @@ package ru.yandex.practicum.order;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.yandex.practicum.order.client.InventoryClient;
+import ru.yandex.practicum.order.client.ProductClient;
 import ru.yandex.practicum.order.dto.CreateOrderRequest;
 import ru.yandex.practicum.order.dto.OrderItemRequest;
+import ru.yandex.practicum.order.dto.ProductDto;
+import ru.yandex.practicum.order.dto.ReserveRequest;
+import ru.yandex.practicum.order.dto.ReserveResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -25,11 +35,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SuppressWarnings("unchecked")
 class OrderServiceAcceptanceTest {
 
+    private static final ProductDto LAMP =
+            new ProductDto(1L, "Acceptance Smart Lamp", "Умная лампа", new BigDecimal("3490.00"), true);
+    private static final ProductDto PLUG =
+            new ProductDto(2L, "Acceptance Smart Plug", "Умная розетка", new BigDecimal("1290.00"), true);
+
     @Autowired
     private MockMvc mvc;
 
     @Autowired
     private ObjectMapper json;
+
+    @MockBean
+    private ProductClient productClient;
+
+    @MockBean
+    private InventoryClient inventoryClient;
+
+    @BeforeEach
+    void setUp() {
+        when(productClient.getProductById(LAMP.id())).thenReturn(LAMP);
+        when(productClient.getProductById(PLUG.id())).thenReturn(PLUG);
+        when(inventoryClient.reserveStock(any(ReserveRequest.class)))
+                .thenAnswer(invocation -> {
+                    ReserveRequest request = invocation.getArgument(0);
+                    return new ReserveResponse(request.productId(), request.quantity(), 100);
+                });
+    }
 
     @Test
     void shouldCreateOrderStoreProductSnapshotAndFindOrderByIdAndEmail() throws Exception {
@@ -37,8 +69,8 @@ class OrderServiceAcceptanceTest {
                 "Acceptance Buyer",
                 "acceptance-buyer@example.com",
                 List.of(
-                        new OrderItemRequest(1L, "Acceptance Smart Lamp", 2, new BigDecimal("3490.00")),
-                        new OrderItemRequest(2L, "Acceptance Smart Plug", 1, new BigDecimal("1290.00"))
+                        new OrderItemRequest(LAMP.id(), 2),
+                        new OrderItemRequest(PLUG.id(), 1)
                 )
         );
 
@@ -53,17 +85,20 @@ class OrderServiceAcceptanceTest {
                 .as("Созданный заказ должен содержать поле id")
                 .isNotNull();
         assertThat(created.get("status"))
-                .as("На текущем этапе новый заказ должен сохраняться в статусе CREATED")
-                .isEqualTo("CREATED");
+                .as("После успешного резервирования товаров заказ должен сохраняться в статусе CONFIRMED")
+                .isEqualTo("CONFIRMED");
         assertThat(asDecimal(created.get("totalPrice")))
-                .as("order-service должен сам рассчитывать totalPrice по снимку товаров из запроса")
+                .as("order-service должен сам рассчитывать totalPrice по ценам из product-service")
                 .isEqualByComparingTo("8270.00");
         assertThat((List<?>) created.get("items"))
                 .as("Заказ должен хранить позиции заказа")
                 .hasSize(2)
                 .anySatisfy(item -> assertThat((Map<String, Object>) item)
-                        .as("Позиция заказа должна хранить снимок названия и цены товара из запроса")
-                        .containsEntry("productName", "Acceptance Smart Lamp"));
+                        .as("Позиция заказа должна хранить снимок названия и цены товара из product-service")
+                        .containsEntry("productName", LAMP.name()));
+
+        verify(inventoryClient).reserveStock(new ReserveRequest(LAMP.id(), 2));
+        verify(inventoryClient).reserveStock(new ReserveRequest(PLUG.id(), 1));
 
         MvcResult byIdResponse = mvc.perform(get("/api/orders/{id}", orderId)).andReturn();
 
