@@ -21,4 +21,3 @@ spring:
           default:
             connectTimeout: 2000
             readTimeout: 3000
-
