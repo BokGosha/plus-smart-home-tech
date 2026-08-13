@@ -15,7 +15,9 @@ public class CommerceFeignErrorDecoder implements ErrorDecoder {
             case 404 -> new RemoteNotFoundException(isProduct
                     ? "Товар не найден"
                     : "Складская запись не найдена");
-            case 409 -> new InsufficientStockException("Недостаточно товара на складе");
+            case 409 -> isProduct
+                    ? new RemoteServiceException("Ошибка вызова " + methodKey)
+                    : new InsufficientStockException("Недостаточно товара на складе");
             default -> new RemoteServiceException("Ошибка вызова " + methodKey);
         };
     }

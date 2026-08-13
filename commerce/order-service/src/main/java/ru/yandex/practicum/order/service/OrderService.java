@@ -30,7 +30,8 @@ public class OrderService {
         Order order = new Order();
         order.setCustomerName(orderData.customerName());
         order.setCustomerEmail(orderData.customerEmail());
-        order.setStatus("CONFIRMED");
+        order.setStatus(orderData.status());
+        order.setStatusDetails(orderData.statusDetails());
 
         for (OrderItemData itemData : orderData.items()) {
             OrderItem item = orderItemMapper.toOrderItem(itemData);

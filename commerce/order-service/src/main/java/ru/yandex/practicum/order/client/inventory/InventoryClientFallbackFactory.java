@@ -1,7 +1,6 @@
 package ru.yandex.practicum.order.client.inventory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.order.exception.InventoryServiceUnavailableException;
@@ -11,9 +10,8 @@ import ru.yandex.practicum.order.exception.InsufficientStockException;
 import ru.yandex.practicum.order.exception.RemoteNotFoundException;
 
 @Component
+@Slf4j
 public class InventoryClientFallbackFactory implements FallbackFactory<InventoryClient> {
-
-    private static final Logger logger = LoggerFactory.getLogger(InventoryClientFallbackFactory.class.getName());
 
     @Override
     public InventoryClient create(Throwable cause) {
@@ -37,7 +35,7 @@ public class InventoryClientFallbackFactory implements FallbackFactory<Inventory
                     throw e;
                 }
 
-                logger.warn("inventory-service недоступен, операция={}, productId={}",
+                log.warn("inventory-service недоступен, операция={}, productId={}",
                         operation, request.productId(), cause);
 
                 throw new InventoryServiceUnavailableException(request.productId(), cause);

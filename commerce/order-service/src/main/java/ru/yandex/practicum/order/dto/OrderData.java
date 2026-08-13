@@ -8,6 +8,10 @@ public record OrderData(
 
         String customerEmail,
 
+        String status,
+
+        String statusDetails,
+
         List<OrderItemData> items
 ) {
 }

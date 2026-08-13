@@ -36,7 +36,6 @@ resilience4j:
       product-service:
         ignoreExceptions:
           - ru.yandex.practicum.order.exception.RemoteNotFoundException
-          - ru.yandex.practicum.order.exception.InsufficientStockException
       inventory-service:
         ignoreExceptions:
           - ru.yandex.practicum.order.exception.RemoteNotFoundException
@@ -44,4 +43,6 @@ resilience4j:
   timelimiter:
     configs:
       default:
-        timeout-duration: 3s
+        # Чуть выше readTimeout (3000ms), чтобы при таймауте срабатывал
+        # сетевой таймаут Feign с понятной причиной, а не TimeLimiter.
+        timeout-duration: 3500ms

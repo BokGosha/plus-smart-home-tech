@@ -85,7 +85,7 @@ public class OrderOrchestrationService {
 
         try {
             return orderService.saveOrder(new OrderData(
-                    request.customerName(), request.customerEmail(), items));
+                    request.customerName(), request.customerEmail(), status, details, items));
         } catch (Exception e) {
             releaseAll(reserved);
             throw e;
