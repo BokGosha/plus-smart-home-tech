@@ -21,3 +21,27 @@ spring:
           default:
             connectTimeout: 2000
             readTimeout: 3000
+      circuitbreaker:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+    instances:
+      product-service:
+        ignoreExceptions:
+          - ru.yandex.practicum.order.exception.RemoteNotFoundException
+          - ru.yandex.practicum.order.exception.InsufficientStockException
+      inventory-service:
+        ignoreExceptions:
+          - ru.yandex.practicum.order.exception.RemoteNotFoundException
+          - ru.yandex.practicum.order.exception.InsufficientStockException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s

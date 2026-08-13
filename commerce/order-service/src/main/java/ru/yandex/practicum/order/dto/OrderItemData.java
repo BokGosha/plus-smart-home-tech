@@ -1,4 +1,4 @@
-package ru.yandex.practicum.order.entity;
+package ru.yandex.practicum.order.dto;
 
 import java.math.BigDecimal;
 
