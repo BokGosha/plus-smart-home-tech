@@ -14,6 +14,7 @@ import ru.yandex.practicum.order.mapper.OrderMapper;
 import ru.yandex.practicum.order.repository.OrderRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -32,6 +33,7 @@ public class OrderService {
         order.setCustomerEmail(orderData.customerEmail());
         order.setStatus(orderData.status());
         order.setStatusDetails(orderData.statusDetails());
+        order.setCreatedAt(LocalDateTime.now());
 
         for (OrderItemData itemData : orderData.items()) {
             OrderItem item = orderItemMapper.toOrderItem(itemData);
