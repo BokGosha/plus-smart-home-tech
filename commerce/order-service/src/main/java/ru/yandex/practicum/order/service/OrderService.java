@@ -5,15 +5,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.order.dto.*;
 import ru.yandex.practicum.order.entity.Order;
-import ru.yandex.practicum.order.entity.OrderData;
+import ru.yandex.practicum.order.dto.OrderData;
 import ru.yandex.practicum.order.entity.OrderItem;
-import ru.yandex.practicum.order.entity.OrderItemData;
+import ru.yandex.practicum.order.dto.OrderItemData;
 import ru.yandex.practicum.order.exception.NotFoundException;
 import ru.yandex.practicum.order.mapper.OrderItemMapper;
 import ru.yandex.practicum.order.mapper.OrderMapper;
 import ru.yandex.practicum.order.repository.OrderRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -30,7 +31,9 @@ public class OrderService {
         Order order = new Order();
         order.setCustomerName(orderData.customerName());
         order.setCustomerEmail(orderData.customerEmail());
-        order.setStatus("CONFIRMED");
+        order.setStatus(orderData.status());
+        order.setStatusDetails(orderData.statusDetails());
+        order.setCreatedAt(LocalDateTime.now());
 
         for (OrderItemData itemData : orderData.items()) {
             OrderItem item = orderItemMapper.toOrderItem(itemData);
