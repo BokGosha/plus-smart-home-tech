@@ -1,6 +1,5 @@
 package ru.yandex.practicum.inventory.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +74,7 @@ public class InventoryService {
                 .orElseThrow(() -> new NotFoundException("Запись с productId=" + productId + " не найдена"));
     }
 
-    public ReserveResponse releaseInventory(@Valid ReserveRequest reserveRequest) {
+    public ReserveResponse releaseInventory(ReserveRequest reserveRequest) {
         Inventory inventory = findInventoryByProductId(reserveRequest.productId());
         Integer quantity = reserveRequest.quantity();
 
